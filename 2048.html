@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html> 
+	<head> 
+		<title>GWC 2048</title>
+		<style> 
+			/* CSS GOES HERE */
+			html, body {
+			  margin: 0;
+			  padding: 10px;
+			  background: #faf8ef;
+			  color: #ffffff;
+			  font-family: "Helvetica Neue", Arial, sans-serif;
+			  font-size: 36px; 
+			  font-weight: bolder;
+			}
+
+			.grid-container {
+			  position: absolute;
+			  z-index: 1; 
+			}
+
+			.grid-row {
+			  margin-bottom: 15px; 
+			}
+
+  			.grid-row:last-child {
+    			margin-bottom: 0; 
+			}	
+
+			.grid-row:after {
+				content: "";
+			    display: block;
+			    clear: both;
+			}
+
+			.grid-cell {
+			  width: 106.25px;
+			  height: 106.25px;
+			  margin-right: 15px;
+			  float: left;
+			  border-radius: 3px;
+			  text-align: center;
+			  background: rgba(238, 228, 218, 0.35); 
+			}
+
+			.grid-cell:last-child {
+			    margin-right: 0; 
+			}
+
+			.game-container {
+				  margin-top: 40px;
+				  position: relative;
+				  padding: 15px;
+				  cursor: default;
+				  background: #bbada0;
+				  border-radius: 6px;
+				  width: 500px;
+				  height: 500px;
+				  -webkit-box-sizing: border-box;
+				  -moz-box-sizing: border-box;
+				  box-sizing: border-box; 
+			}
+		</style> 
+		<script> 
+			/* JS GOES HERE */
+			
+			var boardSize= 4; //constants are better than hard coding!
+			var board = [[0,2,2,0],[0,4,0,0],[0,0,8,0],[0,0,0,0]]; //will change with real board
+			
+			
+			function runGame() {
+				renderBoard();
+				colorBoard();
+			
+			}// close runGame
+			
+			
+			
+			function renderBoard() {
+			
+			//rendering board:
+			for (var row = 0; row < boardSize; row++){ //for every row
+				for (var col = 0; col < boardSize; col++){ //for every column in that row
+					var boardID = "r" + row + "c" + col;
+					if (board[row][col] !=0){ //if our number is not 0
+						document.getElementById(boardID).innerHTML = board[row][col];
+					
+					} else{
+						document.getElementById(boardID).innerHTML = ""; //zeros don't show up on board
+					
+					} //close else loop
+				}//close col loop
+			} //close row loop
+			} //close renderBoard
+			
+			
+			function colorBoard() {
+			//color board:
+			for (var row = 0; row < boardSize; row++) {
+				for (var col = 0; col < boardSize; col++) {
+					var boardID = "r" + row + "c" + col;
+					
+					if(board[row][col] == 2) {
+						document.getElementById(boardID).style.background = "#f0e5da";
+					}
+					else if (board[row][col] == 4) {
+						document.getElementById(boardID).style.background = "#ede2c8";
+					}
+					else if (board[row][col] == 8){
+						document.getElementById(boardID).style.background = "#feb578";
+					}
+					else if (board[row][col] == 16){
+						document.getElementById(boardID).style.background = "#ff9962";
+					}
+					else if (board[row][col] == 32){
+						document.getElementById(boardID).style.background = "#ff8060";
+					}
+					else if (board[row][col] == 64){
+						document.getElementById(boardID).style.background = "#ff613c";
+					}
+					else if (board[row][col] == 128){
+						document.getElementById(boardID).style.background = "#efd26c";
+					}
+					else if (board[row][col] == 256){
+						document.getElementById(boardID).style.background = "#efd15c";
+					}
+					else if (board[row][col] == 512){
+						document.getElementById(boardID).style.background = "#efcd4a";
+					}
+					else if (board[row][col] == 1024){
+						document.getElementById(boardID).style.background = "#f0ca36";
+					}
+					else if (board[row][col] == 2048){
+						document.getElementById(boardID).style.background = "#eeca00";
+					}
+					else{ 
+					document.getElementById(boardID).style.background = "#ccc0b3";
+					}
+
+				}//close col loop
+			} //close row loop
+			
+			} //close colorBoard
+			
+			
+			
+			//temporary function to see how key presses work-- replace later!
+			/*function printKey (event) { //37 left, 38 up, 39 right, 40 down
+				console.log(event.keyCode);
+			
+			} */
+			/*function canMove(dir,row,col){
+
+			if (dir == "left") {
+				if (col > 0){
+					if (board [row][col] == board[row][col-1]){
+					return true;
+					}
+				} //if board row >
+			} //ends left
+			if (dir == "right") {
+				if (col < 3){
+					if (board [row][col] == board[row][col+1]){
+					return true;
+					}
+				} //if board row >
+			} //ends right
+			if (dir == "up") {
+				if (row > 0){
+					if (board [row][col] == board[row+1][col]){
+					return true;
+					}
+					
+				} //if board row >
+			} //ends up
+			if (dir == "down") {
+				if (row < 3){
+					if (board [row][col] == board[row-1][col]){
+					return true;
+					}
+					
+				} //if board row >
+			} //ends down
+			
+				}//closes canMove function*/
+			
+			function arrowPress(event){
+				console.log("arrowPress");
+				if (event.keyCode == 37) {
+					dir = "left";
+					for (var row=0; row<boardSize; row++){
+						for (var col=1; col<boardSize; col++){
+							move(dir,row,col);
+							
+						} //closes for var col
+					} // closes for var row
+					
+					addNewTile();
+					renderBoard();
+					colorBoard();
+				}// closes if event.keyCode
+				if (event.keyCode == 39) {
+					dir = "right";
+					for (var row=0; row<boardSize; row++){
+						for (var col=2; col>=0; col--){
+							move(dir,row,col);
+							
+						} //closes for var col
+					} // closes for var row
+					
+					addNewTile();
+					renderBoard();
+					colorBoard();
+				}// closes if event.keyCode
+				if (event.keyCode == 40) {
+					dir = "down";
+					for (var row=2; row>=0; row--){
+						for (var col=0; col<boardSize; col++){
+							move(dir,row,col);
+							
+						} //closes for var col
+					} // closes for var row
+					
+					addNewTile();
+					renderBoard();
+					colorBoard();
+				}// closes if event.keyCode
+				if (event.keyCode == 38) {
+					dir = "up";
+					for (var row=1; row<boardSize; row++){
+						for (var col=0; col<boardSize; col++){
+							move(dir,row,col);
+							
+						} //closes for var col
+					} // closes for var row
+					
+					addNewTile();
+					renderBoard();
+					colorBoard();
+				}// closes if event.keyCode
+			
+			
+			}//closes function arrowPress 
+			
+			
+			function addNewTile() {
+				var row = Math.floor((Math.random() * 3) + 0);
+				var col = Math.floor((Math.random() * 3) + 0);
+				while (board[row][col] != 0) {
+					row = Math.floor((Math.random() * 3) + 0);
+					col = Math.floor((Math.random() * 3) + 0);
+				}
+				
+				board[row][col] = 2;
+					 
+
+
+					
+				
+			} //end addNewTile
+			function move(dir,row,col){
+				console.log("move");
+				if (dir == "left") {
+					if (board[row][col] == board[row][col-1]) {
+						board[row][col-1]*= 2;
+						board[row][col]=0;
+					}
+					if (board[row][col-1]==0) {
+						board[row][col-1]=board[row][col];
+						board[row][col]=0;
+					
+					}
+				
+				
+				} //close dir left
+					if (dir == "right") {
+					if (board[row][col] == board[row][col+1]) {
+						board[row][col+1]*= 2;
+						board[row][col]=0;
+					}
+					if (board[row][col+1]==0) {
+						board[row][col+1]=board[row][col];
+						board[row][col]=0;
+					
+					}
+				
+				
+				} //close dir right
+				if (dir == "down") {
+					if (board[row][col] == board[row+1][col]) {
+						board[row+1][col]*= 2;
+						board[row][col]=0;
+					}
+					if (board[row+1][col]==0) {
+						board[row+1][col]=board[row][col];
+						board[row][col]=0;
+					
+					}
+				
+				
+				} //close dir down
+				if (dir == "up") {
+					if (board[row][col] == board[row-1][col]) {
+						board[row-1][col]*= 2;
+						board[row][col]=0;
+					}
+					if (board[row-1][col]==0) {
+						board[row-1][col]=board[row][col];
+						board[row][col]=0;
+					
+					}
+				
+				
+				} //close dir up
+				
+			} //close move
+			
+		</script> 
+	</head> 
+
+	<body onload = "runGame()" onkeydown = "arrowPress(event)"> 
+		<div class="game-container">
+			<div class="grid-container">
+		        <div class="grid-row">
+		          <div class="grid-cell" id = "r0c0"></div>
+		          <div class="grid-cell" id = "r0c1"></div>
+		          <div class="grid-cell" id = "r0c2"></div>
+		          <div class="grid-cell" id = "r0c3"></div>
+		        </div>
+		        <div class="grid-row">
+		          <div class="grid-cell" id = "r1c0"></div>
+		          <div class="grid-cell" id = "r1c1"></div>
+		          <div class="grid-cell" id = "r1c2"></div>
+		          <div class="grid-cell" id = "r1c3"></div>
+		        </div>
+		        <div class="grid-row">
+		          <div class="grid-cell" id = "r2c0"></div>
+		          <div class="grid-cell" id = "r2c1"></div>
+		          <div class="grid-cell" id = "r2c2"></div>
+		          <div class="grid-cell" id = "r2c3"></div>
+		        </div>
+		        <div class="grid-row">
+		          <div class="grid-cell" id = "r3c0"></div>
+		          <div class="grid-cell" id = "r3c1"></div>
+		          <div class="grid-cell" id = "r3c2"></div>
+		          <div class="grid-cell" id = "r3c3"></div>
+		        </div>
+	       	</div>
+	    </div>
+	</body>
+
+</html> 
